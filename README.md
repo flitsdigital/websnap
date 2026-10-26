@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Websnap
 
-## Getting Started
+Schone screenshots van websites die we gebouwd hebben, op precies het formaat van onze Photoshop-mockups (MacBook, iPhone). Met of zonder browser-UI (Chrome of Safari, licht of donker); het eindbestand heeft altijd hetzelfde formaat, zodat elke variant in hetzelfde smart object past.
 
-First, run the development server:
+Websnap draait alleen op je eigen Mac (`localhost`). Er is geen account of database.
+
+## Installeren (eenmalig)
+
+1. Installeer **Node.js** (LTS) via [nodejs.org](https://nodejs.org).
+2. Open Terminal in deze map en draai:
+
+   ```bash
+   npm install
+   ```
+
+   Dit installeert ook Chromium (de browser die de screenshots maakt).
+
+## Starten
+
+Dubbelklik op **`Websnap starten.command`**. De eerste keer installeert en bouwt hij alles; daarna opent Websnap vanzelf op [http://localhost:4747](http://localhost:4747). Sluit het Terminal-venster om te stoppen.
+
+Liever handmatig:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build && npx next start -p 4747
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Na een update van de code: opnieuw `npm install && npm run build`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> macOS blokkeert het `.command`-bestand de eerste keer misschien. Klik dan met rechts → **Open**.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Waar komen de bestanden?
 
-## Learn More
+In `~/Pictures/Websnap/<site>/<datum_tijd>/`, bijvoorbeeld:
 
-To learn more about Next.js, take a look at the following resources:
+```
+~/Pictures/Websnap/klant-nl/2026-10-25_141502/klant-nl_iphone_safari-dark_1179x2556.png
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Bestandsnaam: `<site>_<formaat>_<ui>[_fullpage]_<breedte>x<hoogte>.png`. Een andere map kies je met `WEBSNAP_OUTPUT_DIR` in `.env.local` (zie `.env.example`).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Formaten
 
-## Deploy on Vercel
+| Formaat        | Scherm (CSS-px)     | Dichtheid | Bestand             |
+| -------------- | ------------------- | --------- | ------------------- |
+| Desktop        | 1440 × 900          | 2x        | 2880 × 1800         |
+| Desktop HD     | 1920 × 1080         | 1x        | 1920 × 1080         |
+| iPhone         | 393 × 852           | 3x        | 1179 × 2556         |
+| iPhone Pro Max | 430 × 932           | 3x        | 1290 × 2796         |
+| Eigen formaat  | 280–3840 × 400–4000 | 1x/2x/3x  | breedte × dichtheid |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Desktop krijgt de macOS-balk, iPhone de iOS-balk. Met browser-UI wordt de pagina korter gemaakt (zoals in een echte browser), niet bijgesneden.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Secties uitknippen
+
+Zet bovenaan het formulier de schakelaar op **Secties**, vul één pagina in, kies de formaten (standaard Desktop + iPhone) en klik op **Pagina laden**. Je ziet de hele pagina per formaat naast elkaar:
+
+- **Klik** op een sectie (header, hero, footer…) om hem te selecteren. Hij wordt meteen in elk formaat geselecteerd, ook al is hij op de iPhone anders van vorm. Nog een keer klikken haalt hem weg.
+- **Sleep** zelf een kader als een sectie niet precies goed is. Dat kader geldt alleen voor het formaat waarin je het tekent.
+- Klik op **Knip N secties**. Elk stuk wordt een losse PNG op de dichtheid van het formaat (een gebied van 1440 × 620 op Desktop wordt 2880 × 1240), bijvoorbeeld `klant-nl_desktop_sectie-1_2880x1240.png` en `klant-nl_iphone_sectie-1_1179x1788.png`. Hetzelfde nummer is dezelfde sectie.
+- Kies je bij Browser-UI ook **Chrome** of **Safari**, dan krijg je per sectie bovendien een volledig scherm op het vaste formaat (2880 × 1800 of 1179 × 2556) met de browserbalken erom, alsof je naar die sectie gescrold bent: de navbar van de site staat bovenin en de sectie begint eronder. Dat past direct in de MacBook- en iPhone-mockups. Een sectie die hoger is dan het scherm loopt onderaan door tot het scherm vol is.
+
+## Tips
+
+- **Cookiebanner of chat zichtbaar?** Websnap verbergt de bekende. Voeg andere toe onder _Geavanceerd → Ook verbergen_ (CSS-selector, bijv. `.promo-bar`).
+- **Animaties nog niet klaar?** Zet _Extra wachten_ op een paar seconden.
+- **Lokale site** (`localhost:4321`, `site.test`) werkt gewoon; die wordt via `http://` geopend.
+
+## Bekende beperkingen
+
+- Alles rendert in Chromium; de iPhone is emulatie, geen echte Safari.
+- Een lopende run kan niet worden afgebroken; er loopt altijd maar één run tegelijk.
+
+## Ontwikkelen
+
+```bash
+npm run dev      # ontwikkelserver
+npm run check    # typecheck + lint + prettier
+```
+
+Opdracht en ontwerp: [docs/handoff.md](docs/handoff.md).
